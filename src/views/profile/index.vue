@@ -34,7 +34,6 @@ import UserCard from './components/UserCard'
 import Activity from './components/Activity'
 import Timeline from './components/Timeline'
 import Account from './components/Account'
-
 export default {
   name: 'Profile',
   components: { UserCard, Activity, Timeline, Account },
@@ -48,7 +47,10 @@ export default {
     ...mapGetters([
       'name',
       'avatar',
-      'roles'
+      'roles',
+      'email',
+      'gender',
+      '_id'
     ])
   },
   created() {
@@ -59,8 +61,9 @@ export default {
       this.user = {
         name: this.name,
         role: this.roles.join(' | '),
-        email: 'admin@test.com',
-        avatar: this.avatar
+        email: this.email,
+        avatar: this.avatar,
+        _id: this._id
       }
     }
   }

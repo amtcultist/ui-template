@@ -20,6 +20,21 @@ import './utils/error-log' // error log
 
 import * as filters from './filters' // global filters
 
+import MaterialKit from './plugins/material-kit'
+
+Vue.use(MaterialKit)
+const NavbarStore = {
+  showNavbar: false
+}
+
+Vue.mixin({
+  data() {
+    return {
+      NavbarStore
+    }
+  }
+})
+
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api

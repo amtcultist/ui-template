@@ -1,6 +1,5 @@
 <template>
   <div class="app-container documentation-container">
-    <a class="document-btn" target="_blank" href="https://store.akveo.com/products/vue-java-admin-dashboard-spring?utm_campaign=akveo_store-Vue-Vue_demo%2Fgithub&utm_source=vue_admin&utm_medium=referral&utm_content=demo_English_button">Java backend integration</a>
     <a class="document-btn" target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/">Documentation</a>
     <a class="document-btn" target="_blank" href="https://github.com/PanJiaChen/vue-element-admin/">Github Repository</a>
     <a class="document-btn" target="_blank" href="https://panjiachen.gitee.io/vue-element-admin-site/zh/">国内文档</a>
@@ -38,7 +37,7 @@ export default {
   margin: 50px;
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-start;
+  justify-content: space-evenly;
 
   .document-btn {
     flex-shrink: 0;
@@ -47,8 +46,8 @@ export default {
     background: black;
     color: white;
     height: 60px;
-    padding: 0 16px;
-    margin: 16px;
+    width: 200px;
+    margin-bottom: 16px;
     line-height: 60px;
     font-size: 20px;
     text-align: center;

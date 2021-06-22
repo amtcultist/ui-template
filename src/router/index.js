@@ -1,10 +1,16 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-
+import Login from '@/views/login/index.vue'
+import Index from '@/views/index/index.vue'
+import Profile from '@/views/profileIndex/index.vue'
+import Landing from '@/views/landing/index.vue'
+import MainNavbar from '@/layout/MainNavbar.vue'
+import MainFooter from '@/layout/MainFooter.vue'
+import LoginBg from '@/assets/img/profile_city.jpg'
 Vue.use(Router)
 
 /* Layout */
-import Layout from '@/layout'
+import Layout from '@/layout/Layout.vue'
 
 /* Router Modules */
 import componentsRouter from './modules/components'
@@ -52,8 +58,41 @@ export const constantRoutes = [
   },
   {
     path: '/login',
-    component: () => import('@/views/login/index'),
-    hidden: true
+    components: { default: Login, header: MainNavbar, footer: MainFooter },
+    hidden: true,
+    props: {
+      header: { colorOnScroll: 400 }
+    },
+    meta: {
+      bgImage: LoginBg
+    }
+  },
+  {
+    path: '/',
+    name: 'index',
+    components: { default: Index, header: MainNavbar, footer: MainFooter },
+    props: {
+      header: { colorOnScroll: 400 },
+      footer: { backgroundColor: 'black' }
+    }
+  },
+  {
+    path: '/landing',
+    name: 'landing',
+    components: { default: Landing, header: MainNavbar, footer: MainFooter },
+    props: {
+      header: { colorOnScroll: 400 },
+      footer: { backgroundColor: 'black' }
+    }
+  },
+  {
+    path: '/profileIndex',
+    name: 'profileIndex',
+    components: { default: Profile, header: MainNavbar, footer: MainFooter },
+    props: {
+      header: { colorOnScroll: 400 },
+      footer: { backgroundColor: 'black' }
+    }
   },
   {
     path: '/auth-redirect',
@@ -71,12 +110,12 @@ export const constantRoutes = [
     hidden: true
   },
   {
-    path: '/',
+    path: '/dashboard',
     component: Layout,
-    redirect: '/dashboard',
+    redirect: '/dashboard/index',
     children: [
       {
-        path: 'dashboard',
+        path: 'index',
         component: () => import('@/views/dashboard/index'),
         name: 'Dashboard',
         meta: { title: 'Dashboard', icon: 'dashboard', affix: true }
@@ -129,7 +168,7 @@ export const constantRoutes = [
  * the routes that need to be dynamically loaded based on user roles
  */
 export const asyncRoutes = [
-  {
+  /* {
     path: '/permission',
     component: Layout,
     redirect: '/permission/page',
@@ -183,13 +222,13 @@ export const asyncRoutes = [
       }
     ]
   },
-
+  */
   /** when your routing map is too long, you can split it into small modules **/
   componentsRouter,
   chartsRouter,
   nestedRouter,
   tableRouter,
-
+  /*
   {
     path: '/example',
     component: Layout,
@@ -382,7 +421,7 @@ export const asyncRoutes = [
       }
     ]
   },
-
+*/
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]

@@ -8,8 +8,7 @@ import getPageTitle from '@/utils/get-page-title'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
-const whiteList = ['/login', '/auth-redirect'] // no redirect whitelist
-
+const whiteList = ['/login', '/auth-redirect', '/', '/landing', '/profileIndex'] // no redirect whitelist
 router.beforeEach(async(to, from, next) => {
   // start progress bar
   NProgress.start()
@@ -21,9 +20,9 @@ router.beforeEach(async(to, from, next) => {
   const hasToken = getToken()
 
   if (hasToken) {
-    if (to.path === '/login') {
+    if (whiteList.includes(to.path)) {
       // if is logged in, redirect to the home page
-      next({ path: '/' })
+      next({ path: '/dashboard' })
       NProgress.done() // hack: https://github.com/PanJiaChen/vue-element-admin/pull/2939
     } else {
       // determine whether the user has obtained his permission roles through getInfo
@@ -68,7 +67,18 @@ router.beforeEach(async(to, from, next) => {
   }
 })
 
-router.afterEach(() => {
-  // finish progress bar
+router.afterEach((to, from, next) => {
+  if (to.meta && to.meta.bgImage) {
+    console.log(`url(${to.meta.bgImage})`)
+    document.body.style.backgroundRepeat = 'no-repeat'
+    document.body.style.backgroundPosition = 'center'
+    document.body.style.backgroundImage = `url(${to.meta.bgImage})`
+    document.body.style.backgroundSize = 'cover'
+  } else {
+    document.body.style.backgroundRepeat = ''
+    document.body.style.backgroundPosition = ''
+    document.body.style.backgroundImage = ''
+    document.body.style.backgroundSize = ''
+  }
   NProgress.done()
 })
