@@ -4,7 +4,14 @@
       <div class="container">
         <div class="md-layout">
           <div
-            class="md-layout-item md-size-33 md-small-size-66 md-xsmall-size-100 md-medium-size-40 mx-auto"
+            class="
+              md-layout-item
+              md-size-33
+              md-small-size-66
+              md-xsmall-size-100
+              md-medium-size-40
+              mx-auto
+            "
           >
             <login-card header-color="green">
               <h4 slot="title" class="card-title">Login</h4>
@@ -36,19 +43,16 @@
                 :class="getValidationClass('email')"
               >
                 <md-icon>email</md-icon>
-                <label>Email...</label>
-                <md-input v-model="form.email" type="email" />
+                <label>Username/Email...</label>
+                <md-input v-model="form.username" type="username" />
               </md-field>
               <span
-                v-if="!$v.form.email.required && submitted"
+                v-if="!$v.form.username.required && submitted"
                 slot="inputs"
                 class="text-danger"
-              >Email is required</span>
-              <span
-                v-else-if="!$v.form.email.email && submitted"
-                slot="inputs"
-                class="text-danger"
-              >Email is invalid</span>
+              >
+                Username / Email is required
+              </span>
               <md-field
                 slot="inputs"
                 class="md-form-group"
@@ -62,20 +66,22 @@
                 v-if="!$v.form.password.required && submitted"
                 slot="inputs"
                 class="text-danger"
-              >Password is required</span>
+              >
+                Password is required
+              </span>
               <md-progress-bar
                 v-if="loading"
                 slot="inputs"
                 md-mode="indeterminate"
-                style="margin-top:20px"
+                style="margin-top: 20px"
               />
               <p
                 v-if="submitted"
                 slot="error"
                 class="text-danger"
-                style="text-align: center;"
+                style="text-align: center"
               >
-                Email or password is wrong
+                {{ message }}
               </p>
               <md-button
                 slot="footer"
@@ -95,59 +101,59 @@
 <script>
 import { LoginCard } from '@/components';
 import { validationMixin } from 'vuelidate';
-import { required, email } from 'vuelidate/lib/validators';
+import { required } from 'vuelidate/lib/validators';
 export default {
   components: {
-    LoginCard
+    LoginCard,
   },
   mixins: [validationMixin],
   bodyClass: 'login-page',
+  props: {
+    header: {
+      type: String,
+      default: require('@/assets/img/profile_city.jpg'),
+    },
+  },
   data() {
     return {
       loading: false,
       submitted: false,
       form: {
         email: null,
-        password: null
+        password: null,
       },
       redirect: undefined,
-      otherQuery: {}
+      otherQuery: {},
+      message: '',
     };
   },
   validations: {
     form: {
-      email: {
+      username: {
         required,
-        email
       },
       password: {
-        required
-      }
-    }
-  },
-  props: {
-    header: {
-      type: String,
-      default: require('@/assets/img/profile_city.jpg')
-    }
+        required,
+      },
+    },
   },
   computed: {
     headerStyle() {
       return {
-        backgroundImage: `url(${this.header})`
+        backgroundImage: `url(${this.header})`,
       };
-    }
+    },
   },
   watch: {
     $route: {
-      handler: function(route) {
+      handler: (route) => {
         const query = route.query;
         if (query) {
           this.redirect = query.redirect;
           this.otherQuery = this.getOtherQuery(query);
         }
-      }
-    }
+      },
+    },
   },
   created() {
     this.$v.$reset();
@@ -158,7 +164,7 @@ export default {
 
       if (field) {
         return {
-          'md-error': field.$invalid && field.$dirty
+          'md-error': field.$invalid && field.$dirty,
         };
       }
     },
@@ -172,15 +178,16 @@ export default {
             this.loading = false;
             this.$router.push({
               path: this.redirect || '/dashboard',
-              query: this.otherQuery
+              query: this.otherQuery,
             });
           })
-          .catch(() => {
+          .catch((err) => {
+            console.log(err);
+            this.message = err;
             this.loading = false;
             this.submitted = true;
           });
       } else {
-        console.log('error submit');
         return false;
       }
     },
@@ -191,8 +198,8 @@ export default {
         }
         return acc;
       }, {});
-    }
-  }
+    },
+  },
 };
 </script>
 

@@ -20,8 +20,9 @@ function checkNeed() {
 
 if (checkNeed()) {
   Vue.config.errorHandler = function(err, vm, info, a) {
-  // Don't ask me why I use Vue.nextTick, it just a hack.
-  // detail see https://forum.vuejs.org/t/dispatch-in-vue-config-errorhandler-has-some-problem/23500
+  // ErrorLog trigger -> Process stack pop same tick -> cause exception
+  // ErrorLog catch and trigger -> endless loop
+  // Solution: Add a nextTick to put process to async queue -> another tick
     Vue.nextTick(() => {
       store.dispatch('errorLog/addErrorLog', {
         err,

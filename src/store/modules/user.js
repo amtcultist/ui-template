@@ -13,7 +13,7 @@ const state = {
   roles: [],
   email: '',
   _id: '',
-  gender: ''
+  gender: '',
 };
 
 const mutations = {
@@ -40,21 +40,21 @@ const mutations = {
   },
   SET_ID: (state, _id) => {
     state._id = _id;
-  }
+  },
 };
 
 const actions = {
   // user login
   login({ commit }, userInfo) {
-    const { email, password } = userInfo;
+    const { username, password } = userInfo;
     return new Promise((resolve, reject) => {
-      login({ email: email.trim(), password: password })
-        .then(response => {
+      login({ username: username.trim(), password: password })
+        .then((response) => {
           commit('SET_TOKEN', response.token);
           setToken(response.token);
           resolve();
         })
-        .catch(error => {
+        .catch((error) => {
           reject(error);
         });
     });
@@ -64,48 +64,37 @@ const actions = {
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
       getInfo({ token: state.token })
-        .then(response => {
+        .then((response) => {
           const { data } = response;
 
           if (!data) {
             reject('Verification failed, please Login again.');
           }
-          const {
-            roles,
-            name,
-            avatar,
-            introduction,
-            gender_id,
-            email,
-            _id
-          } = data;
+          const { roles, name, avatar, introduction, gender, email, _id } =
+            data;
+
           // roles must be a non-empty array
           if (!roles || roles.length <= 0) {
             reject('getInfo: roles must be a non-null array!');
           }
-          const defaultAvatar = gender => {
-            if (gender === 0) {
+          const defaultAvatar = (gender) => {
+            if (gender?.name === 'Male') {
               return MaleAvatar;
-            } else if (gender === 1) {
+            } else if (gender?.name === 'Female') {
               return FemaleAvatar;
             } else return QuestionAvatar;
           };
-          commit('SET_ID', _id);
-          commit('SET_EMAIL', email);
-          commit(
-            'SET_ROLES',
-            roles.map(value => value.name)
-          );
-          commit('SET_NAME', name);
-          commit(
-            'SET_AVATAR',
-            avatar || avatar == null ? avatar : defaultAvatar(gender_id)
-          );
-          commit('SET_INTRODUCTION', introduction);
-          commit('SET_GENDER', gender_id);
+          commit('SET_ID', _id ?? '');
+          commit('SET_EMAIL', email ?? '');
+          commit('SET_ROLES', roles.map((value) => value.name) ?? []);
+          commit('SET_NAME', name ?? '');
+          commit('SET_AVATAR', avatar ?? defaultAvatar(gender));
+          commit('SET_INTRODUCTION', introduction ?? '');
+          commit('SET_GENDER', gender?.name ?? '');
+
           resolve(data);
         })
-        .catch(error => {
+        .catch((error) => {
           reject(error);
         });
     });
@@ -116,21 +105,21 @@ const actions = {
     const { file, id } = fileData;
     return new Promise((resolve, reject) => {
       uploadFile(file, 'avatar')
-        .then(data => {
+        .then((data) => {
           // console.log(data.Location)
           const postData = {
-            avatar: data.Location
+            avatar: data.Location,
           };
           modifyAvatar(id, postData)
-            .then(response => {
+            .then((response) => {
               commit('SET_AVATAR', response.data.avatar);
               resolve(response.data.avatar);
             })
-            .catch(err => {
+            .catch((err) => {
               reject(err);
             });
         })
-        .catch(err => {
+        .catch((err) => {
           reject(err);
         });
     });
@@ -151,7 +140,7 @@ const actions = {
 
           resolve();
         })
-        .catch(error => {
+        .catch((error) => {
           reject(error);
         });
     });
@@ -159,7 +148,7 @@ const actions = {
 
   // remove token
   resetToken({ commit }) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       commit('SET_TOKEN', '');
       commit('SET_ROLES', []);
       removeToken();
@@ -180,19 +169,19 @@ const actions = {
 
     // generate accessible routes map based on roles
     const accessRoutes = await dispatch('permission/generateRoutes', roles, {
-      root: true
+      root: true,
     });
     // dynamically add accessible routes
     router.addRoutes(accessRoutes);
 
     // reset visited views and cached views
     dispatch('tagsView/delAllViews', null, { root: true });
-  }
+  },
 };
 
 export default {
   namespaced: true,
   state,
   mutations,
-  actions
+  actions,
 };
