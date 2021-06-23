@@ -19,21 +19,20 @@
             checkPermissionByRouterName('RoleManagementSearch')
           "
         >
-          <el-form label-width="170px">
+          <el-form label-width="100px">
             <el-row :gutter="20">
               <el-col :span="12" align="center">
                 <el-form-item label="Name:">
                   <el-input v-model="name" />
                 </el-form-item>
               </el-col>
-            </el-row>
-            <el-row :gutter="20">
-              <el-col :span="12" align="center">
+              <el-col :span="12">
                 <el-form-item label="Permissions:">
                   <el-select
                     v-model="permissions"
                     multiple
                     placeholder="Select permissions to search"
+                    style="width: 100%"
                   >
                     <el-option
                       v-for="item in permissionsList"
