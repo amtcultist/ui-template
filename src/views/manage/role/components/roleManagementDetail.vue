@@ -121,7 +121,6 @@ export default {
       findRoleById(this.$route.params.id).then((response) => {
         /* Get data */
         this.form = response.data;
-
         /* Check into key */
         this.$refs.tree.setCheckedKeys(this.form.permissions);
 

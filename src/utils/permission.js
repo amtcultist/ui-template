@@ -1,4 +1,5 @@
 import store from '@/store';
+import _ from 'lodash';
 
 /**
  * @param {Array} value
@@ -83,4 +84,26 @@ export function getChildrenNames(routes) {
     }
   });
   return routeNames;
+}
+
+export function recursiveRouteFromPermission(routes, permissions) {
+  routes.forEach((route, index) => {
+    if (!route.children) {
+      if (route.name && !permissions.includes(route.name)) {
+        route.markForDelete = true;
+      }
+    } else {
+      route.children = recursiveRouteFromPermission(
+        route.children,
+        permissions
+      );
+    }
+  });
+  return routes.filter((x) => !x.markForDelete);
+}
+
+export function getRouteFromPermission(permissions) {
+  const routesToCheck = _.cloneDeep(getRoutes());
+  const routes = recursiveRouteFromPermission(routesToCheck, permissions);
+  return routes;
 }
