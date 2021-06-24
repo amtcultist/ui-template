@@ -22,6 +22,7 @@ const genderRoutes = {
     },
     {
       path: 'create',
+      component: () => import('@/views/manage/gender/create'),
       meta: {
         title: 'Gender Management Create',
       },
@@ -30,6 +31,7 @@ const genderRoutes = {
     },
     {
       path: 'edit',
+      component: () => import('@/views/manage/gender/edit'),
       meta: {
         title: 'Gender Management Edit',
       },

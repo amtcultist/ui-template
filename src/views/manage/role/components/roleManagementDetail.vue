@@ -18,7 +18,26 @@
         :rules="rules"
       >
         <el-form-item prop="name" label="Name">
-          <el-input v-model="form.name" placeholder="Role name" />
+          <el-input
+            v-model="form.name"
+            placeholder="Role name"
+            @input="handleInput()"
+            @keypress.native="omitSpecialChar($event)"
+          />
+          <div v-if="!isFirstName">
+            <span v-if="isLoadingName">
+              <img :src="loadingImage" width="20px" style="margin-right: 5px" />
+              Checking role name validity
+            </span>
+            <span v-if="isValidName && !isLoadingName">
+              <svg-icon icon-class="flat-tick" style="margin-right: 5px" />
+              Role name can be use
+            </span>
+            <span v-if="!isValidName && !isLoadingName">
+              <svg-icon icon-class="flat-cross" style="margin-right: 5px" />
+              Invalid role name
+            </span>
+          </div>
         </el-form-item>
         <el-form-item prop="description" label="Description">
           <el-input
@@ -42,7 +61,11 @@
           />
         </el-form-item>
         <div style="text-align: center">
-          <el-button type="primary" :disabled="isSaved()" @click="saveHandler">
+          <el-button
+            type="primary"
+            :disabled="isSaved() || !isValidName || isLoadingName"
+            @click="saveHandler"
+          >
             Confirm
           </el-button>
         </div>
@@ -54,7 +77,12 @@
 import path from 'path';
 import { getRoutes, checkPermissionByRouterName } from '@/utils/permission';
 import _ from 'lodash';
-import { createRole, findById as findRoleById, updateRole } from '@/api/role';
+import {
+  createRole,
+  findById as findRoleById,
+  updateRole,
+  validateByName as validateRoleByName,
+} from '@/api/role';
 
 const defaultRole = {
   name: '',
@@ -68,6 +96,10 @@ export default {
     isEdit: {
       type: Boolean,
       default: false,
+    },
+    loadingImage: {
+      type: String,
+      default: require('@/assets/gif/unblockable.gif'),
     },
   },
   data() {
@@ -89,6 +121,10 @@ export default {
       rules: {
         name: [{ validator: validateRequire, required: true, trigger: 'blur' }],
       },
+      timeoutName: null,
+      isLoadingName: false,
+      isValidName: true,
+      isFirstName: true,
     };
   },
   computed: {
@@ -105,6 +141,32 @@ export default {
   },
   methods: {
     checkPermissionByRouterName,
+    omitSpecialChar(e) {
+      const charToBlock = '/';
+      if (e.charCode === charToBlock.charCodeAt(0)) {
+        e.preventDefault();
+      }
+    },
+    handleInput() {
+      if (
+        !this.form.name ||
+        this.form.name === '' ||
+        this.form.name === this.savedForm.name
+      ) {
+        if (this.timeoutName) clearTimeout(this.timeoutName);
+        return (this.isFirstName = true);
+      }
+
+      this.isFirstName = false;
+      this.isLoadingName = true;
+      if (this.timeoutName) clearTimeout(this.timeoutName);
+      this.timeoutName = setTimeout(() => {
+        validateRoleByName(this.form.name).then((response) => {
+          this.isLoadingName = false;
+          this.isValidName = response.data;
+        });
+      }, 1000);
+    },
     syncSavedForm() {
       this.savedForm = _.cloneDeep(this.form);
     },

@@ -45,3 +45,10 @@ export function findById(id) {
     method: 'get',
   });
 }
+
+export function validateByName(name) {
+  return devRequest({
+    url: `/role/validate/name/${name}`,
+    method: 'get',
+  });
+}

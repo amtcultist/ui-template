@@ -12,6 +12,20 @@
           </el-button>
         </router-link>
       </div>
+      <el-row :gutter="20">
+        <el-col :span="24">
+          <el-button
+            style="float: left"
+            :icon="
+              showSearch === false ? 'el-icon-arrow-down' : 'el-icon-arrow-up'
+            "
+            type="text"
+            @click="showSearch = !showSearch"
+          >
+            Show search fields
+          </el-button>
+        </el-col>
+      </el-row>
       <el-collapse-transition>
         <div
           v-if="
@@ -60,20 +74,6 @@
           </el-form>
         </div>
       </el-collapse-transition>
-      <el-row :gutter="20">
-        <el-col :span="24">
-          <el-button
-            style="float: left"
-            :icon="
-              showSearch === false ? 'el-icon-arrow-down' : 'el-icon-arrow-up'
-            "
-            type="text"
-            @click="showSearch = !showSearch"
-          >
-            Show search fields
-          </el-button>
-        </el-col>
-      </el-row>
       <el-table v-loading.body="listLoading" :data="list">
         <el-table-column
           label="#"
